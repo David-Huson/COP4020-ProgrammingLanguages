@@ -4,4 +4,4 @@ A repository of all the projects in COP4020. So far all projects are in the C pr
 
 ## Projects
 
-1. [Project 1](https://github.com/David-Huson/COP4020-ProgrammingLanguages/)
+1. [Project 1](https://github.com/David-Huson/COP4020-ProgrammingLanguages/tree/main/Project1)
