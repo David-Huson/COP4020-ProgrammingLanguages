@@ -13,7 +13,7 @@
     - A statement may appear on multiple lines (with no continuation character).
 - Finally, your program must include a capability to provide comments. Comments will be on a single line and they will start with a tilda:
 
-~ this is a comment
+`~ this is a comment`
 
 You will parse the statements, keeping track of where you are in the string, and report whether or not the input program is legal. Your program will report either
 
@@ -27,18 +27,13 @@ You will implement both a **lexical analyzer** and a **parser**. These are clear
 - The lexical analyzer will simply decide what comes next in the token stream and return it. 
 - The parser will decide if the token is OK at that spot.
 
-In your program, you will need to have an
+In your program, you will need to have an `int lookahead;` that always holds the next token.
 
-    int lookahead;
-
-that always holds the next token.
-
-The structure of Number and Identifier
+The structure of **Number** and **Identifier**
 
 You should detect whether or not a character string comprises an integer.
 
-These are valid numbers:
-    123, 1234567, 456789, etc ...
+These are valid numbers: `123, 1234567, 456789, etc ...`
  
 
 A legal <identifier> will start with a letter followed by combinations of letters, numbers, and underscores, subject to the following two rules:
@@ -47,11 +42,9 @@ A legal <identifier> will start with a letter followed by combinations of letter
 2. An identifier cannot end with an underscore.
 
 These are valid identifiers:
-     e123, e, qwert5yuio, a_b_7
+     `e123, e, qwert5yuio, a_b_7`
 
-These are not:
-
-    e__7, abc_,  7yght, _iuh
+These are not: `e__7, abc_,  7yght, _iuh`
 
 Typical  Statements (legal and illegal)
 ```
@@ -77,7 +70,7 @@ end
 ```
 ## Deliverables
 
-1. A User's Manual "UsersManual.docx"
+1. A User's Manual "`UsersManual.docx`"
 2. Your source code
 3. A makefile
 4. The eight programs provided with the assignment.
