@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns:m="http://schemas.microsoft.com/office/2004/12/omml" xmlns="http://www.w3.org/TR/REC-html40"><head><title>Code Analyzer</title></head><body lang="EN-US">
+<div style="text-align: center;"><span style="font-weight: bold;"> Programming Languages</span> <br> <b>John W. Coffey</b></div>
+<div style="text-align: center;"><b>Programming project # 1</b></div>
+<div style="text-align: center;"><b>Recursive-descent Parser</b></div>
+<p></p>
+<p><b>Project Description</b></p>
+<p>You will implement this program in the <i>C programming language</i>.
+You must provide a makefile and your program must run on the ssh server
+in Linux.
+Your program will implement the pseudocode described in class as needed, adding, removing or editing elements as needed. Your
+application must take one command-line argument, the name of the file
+to be checked. The file will contain a number of assignment statements.
+Each assignment statement will be terminated by a semicolon (;).
+Furthermore,
+your group of assignment statements must be delimited by the <span style="font-family: 'Courier New';">"begin<span class="GramE">"<span style="font-family: 'Times New Roman',serif;"> &nbsp;and</span></span></span> <span style="font-family: 'Courier New';">"end"</span>
+reserved words with a dot (.) after the <span style="font-family: 'Courier New';">"end"</span> token. The intent is that programs will be free format,
+meaning that indentations do not matter, multiple statements are
+permitted on a line<span class="GramE">, &nbsp;a</span> statement may
+appear on multiple lines (with no continuation character). Finally,
+your program must include a capability to provide comments. Comments
+will be on a single line and they will start with a <span class="SpellE">tilda</span>:</p>
+<p><span style="font-family: 'courier new',courier,sans-serif;">~ <span class="GramE">this</span> is a comment</span></p>
+<p>You will parse the statements, keeping track of where you are in the
+string, and report whether or not the input program is legal. Your
+program will report either</p>
+<p>- The program is legal: <span style="font-family: monospace;">"success"</span>. <br> - Line <span style="font-family: 'Courier New';">&lt;integer&gt;</span> contains error <tt><span style="font-size: 10pt;">&lt;<span class="SpellE">errormsg</span>&gt;</span></tt> (missing ']', missing ')', expected assignment operator, expected operator, <span class="SpellE">etc</span>)</p>
+<p class="MsoNormal"><span>If all statements are legal, you must report
+all the identifiers that were used. Therefore, you will need at symbol
+table. Your symboltable can be implemented however you wish, but a
+hashtable is the logical choice. If&nbsp;the program is illegal, you do
+not need to list the
+identifiers.<o:p></o:p></span></p>
+<p>You will implement both a lexical analyzer and a parser. These are
+clearly different functions and they should be implemented in different
+physical files. The lexical analyzer will simply decide what comes next
+in the token stream and return it. The parser will decide if the token
+is OK at that spot.</p>
+<p>In your program, you will need to have an</p>
+<p>&nbsp;&nbsp; <span style="font-family: 'Courier New';">&nbsp;<span class="SpellE"><span class="GramE">int</span></span> <span class="SpellE">lookahead</span>; </span></p>
+<p><span class="GramE">that</span> always holds the next token.</p>
+<p><b>The structure of </b><tt><b><span style="font-size: 13.5pt;">Number</span></b></tt><b> and </b><tt><b><span style="font-size: 13.5pt;">Identifier</span></b></tt></p>
+<p>You should detect whether or not a character string comprises an integer.</p>
+<p style="margin: 0in 0in 0.0001pt;">These are valid numbers: <br> <tt><span style="font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp; 123, 1234567, 456789, </span></tt><span class="SpellE">etc ...</span> <br> &nbsp;</p>
+<p style="margin: 0in 0in 0.0001pt;">A legal <tt><span style="font-size: 10pt;">&lt;identifier&gt;</span></tt> will start with a letter followed by combinations of letters, numbers, and underscores, subject to the following two rules:</p>
+<p style="margin: 0in 0in 0.0001pt;">&nbsp;</p>
+<p style="margin: 0in 0in 0.0001pt;">1. You cannot have consecutive underscores</p>
+<p style="margin: 0in 0in 0.0001pt;">2. An identifier cannot end with an underscore.</p>
+<p>These are valid identifiers: <br> &nbsp;&nbsp;&nbsp;<tt><span style="font-size: 10pt;">&nbsp;&nbsp; e123, e, qwert5yuio, a_b_7</span></tt></p>
+<p>These are not:</p>
+<p>&nbsp;&nbsp;<span style="font-family: 'Courier New';">&nbsp;&nbsp;&nbsp; e__7, <span class="SpellE">abc</span>_,<span class="GramE">&nbsp; 7yght</span>, _<span class="SpellE">iuh</span></span></p>
+<p><span class="GramE"><b>Typical &nbsp;Statements</b></span><b> (legal and illegal)</b></p>
+<blockquote style="margin-top: 5pt; margin-bottom: 5pt;">
+<p><tt><span style="font-size: 10pt;">a = b;</span></tt><span style="font-size: 10pt; font-family: 'Courier New';"><br> <tt>a=<span class="SpellE">af</span>+=</tt><br> <tt>a=;</tt><br> <tt>a_5 = 2;</tt><br> <tt>6 = j;</tt><br> <tt>a=d*</tt><br> <tt>dd5=((3+5*8);</tt><br> <tt>%iii=0</tt><br> <tt>a=b2-(((x_yz + 99)* <span class="SpellE">abc</span>)*d);</tt><br> </span><span style="font-family: 'Courier New';">qwerty=((6 - <span class="SpellE">abcd</span>)*(a + b));<br> </span>&nbsp;<span class="GramE"><span style="font-family: 'Courier New';">xyz</span></span><span style="font-family: 'Courier New';"> = (9*8*7*6)/(<span class="SpellE">a+b+c</span>);</span></p>
+</blockquote>
+<p><b>A legal program</b></p>
+<pre>~ a typical, minimal legal program<br>begin<br>  qwerty=((6 - ab_cd)*(a + b));<br>&nbsp;&nbsp;xyz = (9*8*7765*6)/(a+b+c);<br>end</pre>
+<p><b></b></p>
+
+<p><b>Deliverables</b><br>
+<br>1. A User's Manual "UsersManual.docx"<br> 2. Your source code<br> 3. A <span style="font-family: Courier New,Courier,monospace;">makefile</span><br>4. The eight programs provided with the assignment.<br>5. A script named "run" to execute all your programs (legal and illegal)<br> <br> <b>Submission: </b><span style="font-weight: bold;">&nbsp;</span> <br></p>
+<p style="color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;; font-size: medium; font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px;">1.
+Compile and run your program one last time before submitting it. Your
+program must compile with a makefile in the Linux lab and run with your
+script.<br>2.
+Place every file in your submission in a SINGLE DIRECTORY named
+&lt;last name&gt;&lt;firstInitial&gt;. For instance, I would create
+directory:<br>&nbsp;&nbsp;&nbsp;&nbsp; coffeyj.<br>3. zip that FOLDER
+into a .zip file with the SAME NAME. This means that inside your zip
+file, you will have exactly one folder (from the example: coffeyj)
+showing at the top level. Inside that folder will be ALL the files in
+your project.<br>4. DO NOT make separate folders for documentation and
+source files (or anything else) inside the main folder. Having such a
+setup simply necessitates more navigation time to get where we need to
+go to grade.<br>5. The script and input files should be in the top-level folder along with the source code.</p>
+<p style="color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;; font-size: medium; font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; margin-top: 0pt; margin-bottom: 0pt;">So, this is how your submission should be structured (if your name were John Coffey) for this project:</p>
+<p style="color: rgb(0, 0, 0); font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-family: monospace; font-size: medium; margin-top: 0pt; margin-bottom: 0pt;">coffeyj.zip</p>
+<p style="color: rgb(0, 0, 0); font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-family: monospace; font-size: medium; margin-top: 0pt; margin-bottom: 0pt;">&nbsp;&nbsp;&nbsp;
+coffeyj&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// the folder holding all your files</p>
+<p style="color: rgb(0, 0, 0); font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-family: monospace; font-size: medium; margin-top: 0pt; margin-bottom: 0pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+file1.h&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp; //
+with the actual names of your files,<br></p>
+<p style="color: rgb(0, 0, 0); font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-family: monospace; font-size: medium; margin-top: 0pt; margin-bottom: 0pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; file1.c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; // of course ...<br></p>
+<p style="color: rgb(0, 0, 0); font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-family: monospace; font-size: medium; margin-top: 0pt; margin-bottom: 0pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</p>
+<p style="color: rgb(0, 0, 0); font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-family: monospace; font-size: medium; margin-top: 0pt; margin-bottom: 0pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; UserManual.docx</p>
+<p style="color: rgb(0, 0, 0); font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-family: monospace; font-size: medium; margin-top: 0pt; margin-bottom: 0pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Makefile</p>
+<p style="color: rgb(0, 0, 0); font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-family: monospace; font-size: medium; margin-top: 0pt; margin-bottom: 0pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; a1, a2, ... , a8&nbsp;&nbsp; // the test programs to be compiled<br>
+</p>
+<p style="color: rgb(0, 0, 0); font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; font-family: monospace; font-size: medium; margin-top: 0pt; margin-bottom: 0pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+run&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// the script to run your program eight times<br>
+</p>
+<p style="color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;; font-size: medium; font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px;">6.
+MacOS users - remove the _MacOS_ utility folder before you zip up the
+file. If you cannot, delete it from the archive once the archive is
+created. It just takes up space and is not needed for anything we do
+with your submissions.<br>7. Login to UWF's Canvas system. Select our course.<br>8. Go to the appropriate assignment, choose your program file and click the "Upload Assignment" button.<br>9. Upload your file. Check to insure that the file was uploaded.<br>10. Be sure to review the university policy on academic dishonesty. This is an individual project</p>
+
+<p style="color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;; font-size: medium; font-style: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px;">Please review the policy on ACADEMIC MISCONDUCT. This is an<span>&nbsp;</span><i>individual assignment.</i></p>
+<p>&nbsp; <br> &nbsp; <br> &nbsp; <br> &nbsp;</p>
+</body></html>
