@@ -22,14 +22,14 @@ You will parse the statements, keeping track of where you are in the string, and
 
 If all statements are legal, you must report all the identifiers that were used. Therefore, you will need at symbol table. Your symboltable can be implemented however you wish, but a hashtable is the logical choice. If the program is illegal, you do not need to list the identifiers.
 
-You will implement both a *lexical analyzer* and a *parser*. These are clearly different functions and they should be implemented in different physical files. 
+You will implement both a **lexical analyzer** and a **parser**. These are clearly different functions and they should be implemented in different physical files. 
 
 - The lexical analyzer will simply decide what comes next in the token stream and return it. 
 - The parser will decide if the token is OK at that spot.
 
 In your program, you will need to have an
 
-    `int lookahead;`
+    int lookahead;
 
 that always holds the next token.
 
@@ -38,7 +38,7 @@ The structure of Number and Identifier
 You should detect whether or not a character string comprises an integer.
 
 These are valid numbers:
-    `123, 1234567, 456789, etc ...`
+    123, 1234567, 456789, etc ...
  
 
 A legal <identifier> will start with a letter followed by combinations of letters, numbers, and underscores, subject to the following two rules:
@@ -47,14 +47,14 @@ A legal <identifier> will start with a letter followed by combinations of letter
 2. An identifier cannot end with an underscore.
 
 These are valid identifiers:
-     `e123, e, qwert5yuio, a_b_7`
+     e123, e, qwert5yuio, a_b_7
 
 These are not:
 
-    ` e__7, abc_,  7yght, _iuh`
+    e__7, abc_,  7yght, _iuh
 
 Typical  Statements (legal and illegal)
-```cpp
+```
 a = b;
 a=af+=
 a=;
@@ -95,7 +95,7 @@ end
 So, this is how your submission should be structured (if your name were John Coffey) for this project:
 
 coffeyj.zip
-```cpp
+
     coffeyj                // the folder holding all your files
 
         file1.h            // with the actual names of your files,
@@ -110,7 +110,7 @@ coffeyj.zip
 
         a1, a2, ... , a8   // the test programs to be compiled
         run                // the script to run your program eight times
-```
+
 6. MacOS users - remove the _MacOS_ utility folder before you zip up the file. If you cannot, delete it from the archive once the archive is created. It just takes up space and is not needed for anything we do with your submissions.
 7. Login to UWF's Canvas system. Select our course.
 8. Go to the appropriate assignment, choose your program file and click the "Upload Assignment" button.
