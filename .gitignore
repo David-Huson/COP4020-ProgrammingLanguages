@@ -56,3 +56,7 @@ dkms.conf
 
 #project specific files
 *.htm
+.markdownlint.json
+.vscode/
+*.code-workspace
+*.md
