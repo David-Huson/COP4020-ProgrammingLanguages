@@ -1,5 +1,5 @@
 C = gcc
-main: main.o
+main: main.o hashTable.o
 	$(C)  -o $@ $^
 
 clean:

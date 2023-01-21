@@ -1,5 +1,8 @@
-#include <stdio.h>
-int main() {
-    printf("Hello\n"); 
-    return 0;
+#include "symbolTable.h"
+
+int main(int argc, char *argv[] ) {
+
+    HashTable* symbolTable = init();
+    print(symbolTable);
+
 }
