@@ -7,6 +7,8 @@
 
 #define MAX_CAPACITY 49999
 
+typedef enum { false, true } bool;
+
 typedef struct Entity{
     int key;
 	char* value;
@@ -24,5 +26,6 @@ void set(HashTable* table, const int key, const char* value);
 char* get(HashTable* table, const int key);
 void del(HashTable* table, const int key);
 void print(HashTable* table);
+void destroy(HashTable* table);
 
 #endif

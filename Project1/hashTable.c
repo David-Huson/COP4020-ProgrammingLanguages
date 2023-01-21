@@ -139,6 +139,42 @@ void del(HashTable* table, const int key) {
     }
 }
 
+void destroy(HashTable* table) {
+    if(!table) return;
+    size_t i = 0;
+    if(table->entities)
+    {
+        //Free all entries
+        Entity* current;
+        while(i < MAX_CAPACITY)
+        {
+            Entity* entity = table->entities[i];
+            while(true) {
+                if(entity == NULL) {
+                    break;
+                }
+                if(entity->value)
+                {
+                    free(entity->value);
+                    entity->value = NULL;
+                }
+                current = entity;
+                entity = entity->next;
+                free(current);
+            }
+            i++;
+        }
+        //Free the entry list pointer
+        free(table->entities);
+        table->entities = NULL;
+    }
+ 
+    //Free the hashtable pointer
+    free(table);
+    table = NULL;
+    return;
+}
+
 void print(HashTable* table) {
     for (int i = 0; i < MAX_CAPACITY; ++i) {
         Entity* entity = table->entities[i];
@@ -149,7 +185,7 @@ void print(HashTable* table) {
 
         printf("slot[%4d]: ", i);
 
-        for(;;) {
+        while(true) {
             printf("%d=%s ", entity->key, entity->value);
 
             if (entity->next == NULL) {

@@ -4,5 +4,6 @@ int main(int argc, char *argv[] ) {
 
     HashTable* symbolTable = init();
     print(symbolTable);
+    destroy(symbolTable);
 
 }
