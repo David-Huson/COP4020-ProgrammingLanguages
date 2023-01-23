@@ -1,14 +1,17 @@
 #include "hashTable.h"
 
-int
-hash(const int key)
-{
-  return key % MAX_CAPACITY;
+int hash(const char* key) {
+  int index = 0;
+  int c;
+  do {
+    c = *key++;
+    index = ((MAX_CAPACITY << 5) + MAX_CAPACITY) + c;
+  } while ((c = *key++));
+
+  return index % MAX_CAPACITY;
 }
 
-HashTable*
-createTable()
-{
+HashTable* createTable() {
   // allocate memory for the table
   HashTable* table = malloc(sizeof(HashTable));
 
@@ -21,13 +24,11 @@ createTable()
   return table;
 }
 
-Entity*
-pair(const int key, const char* value)
-{
+Entity* pair(const char* key, const int value) {
   Entity* entity = malloc(sizeof(Entity) * 1);
-  entity->value = malloc(strlen(value) + 1);
-  entity->key = key;
-  strcpy(entity->value, value);
+  entity->key = malloc(strlen(key) + 1);
+  strcpy(entity->key, key);
+  entity->value = value;
 
   // next starts out null but may be set later on
   entity->next = NULL;
@@ -35,10 +36,8 @@ pair(const int key, const char* value)
   return entity;
 }
 
-void
-set(HashTable* table, const int key, const char* value)
-{
-  unsigned int slot = hash(key);
+void set(HashTable* table, const char* key, const int value) {
+  int slot = hash(key);
 
   // try to look up an entity set
   Entity* entity = table->entities[slot];
@@ -55,11 +54,9 @@ set(HashTable* table, const int key, const char* value)
   // reached or a matching key is found
   while (entity != NULL) {
     // check key
-    if (entity->key == key) {
+    if (strcmp(entity->key, key) == 0) {
       // match found, replace value
-      free(entity->value);
-      entity->value = malloc(strlen(value) + 1);
-      strcpy(entity->value, value);
+      entity->value = value;
       return;
     }
 
@@ -72,34 +69,30 @@ set(HashTable* table, const int key, const char* value)
   prev->next = pair(key, value);
 }
 
-char*
-get(HashTable* table, const int key)
-{
-  unsigned int slot = hash(key);
+int get(HashTable* table, const char* key) {
+  int slot = hash(key);
 
   // try to find a valid slot
   Entity* entity = table->entities[slot];
 
   // no slot means no entry
   if (entity == NULL) {
-    return NULL;
+    return -1;
   }
 
   while (entity != NULL) {
     // return value if found
-    if (entity->key == key) {
+    if (strcmp(entity->key, key) == 0) {
       return entity->value;
     }
 
     entity = entity->next;
   }
-  return NULL;
+  return -1;
 }
 
-void
-del(HashTable* table, const int key)
-{
-  unsigned int bucket = hash(key);
+void del(HashTable* table, const char* key) {
+  int bucket = hash(key);
 
   // try to find a valid bucket
   Entity* entity = table->entities[bucket];
@@ -110,35 +103,35 @@ del(HashTable* table, const int key)
   }
 
   Entity* prev;
-  int idx = 0;
+  int index = 0;
 
   // walk through each entry until either the end is reached or a matching key
   // is found
   while (entity != NULL) {
     // check key
-    if (entity->key == key) {
+    if (strcmp(entity->key, key) == 0) {
       // first item and no next entry
-      if (entity->next == NULL && idx == 0) {
-	table->entities[bucket] = NULL;
+      if (entity->next == NULL && index == 0) {
+        table->entities[bucket] = NULL;
       }
 
       // first item with a next entry
-      if (entity->next != NULL && idx == 0) {
-	table->entities[bucket] = entity->next;
+      if (entity->next != NULL && index == 0) {
+        table->entities[bucket] = entity->next;
       }
 
       // last item
-      if (entity->next == NULL && idx != 0) {
-	prev->next = NULL;
+      if (entity->next == NULL && index != 0) {
+        prev->next = NULL;
       }
 
       // middle item
-      if (entity->next != NULL && idx != 0) {
-	prev->next = entity->next;
+      if (entity->next != NULL && index != 0) {
+        prev->next = entity->next;
       }
 
       // free the deleted entry
-      free(entity->value);
+      free(entity->key);
       free(entity);
 
       return;
@@ -148,13 +141,11 @@ del(HashTable* table, const int key)
     prev = entity;
     entity = prev->next;
 
-    ++idx;
+    ++index;
   }
 }
 
-void
-destroy(HashTable* table)
-{
+void destroy(HashTable* table) {
   if (!table)
     return;
   size_t i = 0;
@@ -164,16 +155,16 @@ destroy(HashTable* table)
     while (i < MAX_CAPACITY) {
       Entity* entity = table->entities[i];
       while (1) {
-	if (entity == NULL) {
-	  break;
-	}
-	if (entity->value) {
-	  free(entity->value);
-	  entity->value = NULL;
-	}
-	current = entity;
-	entity = entity->next;
-	free(current);
+        if (entity == NULL) {
+          break;
+        }
+        if (entity->key) {
+          free(entity->key);
+          entity->value = 0;
+        }
+        current = entity;
+        entity = entity->next;
+        free(current);
       }
       i++;
     }
@@ -188,9 +179,7 @@ destroy(HashTable* table)
   return;
 }
 
-void
-print(HashTable* table)
-{
+void dump(HashTable* table) {
   for (int i = 0; i < MAX_CAPACITY; ++i) {
     Entity* entity = table->entities[i];
 
@@ -198,18 +187,15 @@ print(HashTable* table)
       continue;
     }
 
-    printf("slot[%4d]: ", i);
-
     while (1) {
-      printf("%d=%s ", entity->key, entity->value);
+      printf("slot[%4d]: ", i);
+      printf("%s=%d\n", entity->key, entity->value);
 
       if (entity->next == NULL) {
-	break;
+        break;
       }
 
       entity = entity->next;
     }
-
-    printf("\n");
   }
 }

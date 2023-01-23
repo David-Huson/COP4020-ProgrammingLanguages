@@ -1,9 +1,14 @@
-#include "symbolTable.h"
+#include "lexer.h"
 
-int main(int argc, char *argv[] ) {
+int main(int argc, char* argv[]) {
 
-    HashTable* symbolTable = init();
-    print(symbolTable);
-    destroy(symbolTable);
+  HashTable* symbolTable = init();
+  dump(symbolTable);
+  int* lineno = 0;
+  FILE* input = fopen("test.txt", "r");
+  int type = lexan(input, symbolTable, lineno);
+  fclose(input);
 
+  dump(symbolTable);
+  destroy(symbolTable);
 }

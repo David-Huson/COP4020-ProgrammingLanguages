@@ -1,7 +1,7 @@
 C = gcc
-main: main.o hashTable.o
+main: main.o hashTable.o lexer.o symbolTable.o
 	$(C)  -o $@ $^
 
 clean:
 	rm -rf *.dSYM
-	$(RM) *.o *.gc* main 
+	$(RM) *.o *.gc* main lexer hashTable symbolTable 

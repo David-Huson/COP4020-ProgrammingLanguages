@@ -6,26 +6,30 @@
 #include <string.h>
 
 #define MAX_CAPACITY 49999
+#define ID           "id"
+#define NUM          "num"
+#define BEGIN        "begin"
+#define END          "end"
+#define NOT_FOUND    "not_found"
+#define DONE         "done"
 
-typedef struct Entity
-{
-  int key;
-  char* value;
+typedef struct Entity {
+  char* key;
+  int value;
   struct Entity* next;
 } Entity;
 
-typedef struct HashTable
-{
+typedef struct HashTable {
   Entity** entities;
 } HashTable;
 
-int hash(const int key);
+int hash(const char* key);
 HashTable* createTable();
-Entity* pair(const int key, const char* value);
-void set(HashTable* table, const int key, const char* value);
-char* get(HashTable* table, const int key);
-void del(HashTable* table, const int key);
-void print(HashTable* table);
+Entity* pair(const char* key, const int value);
+void set(HashTable* table, const char* key, const int value);
+int get(HashTable* table, const char* key);
+void del(HashTable* table, const char* key);
+void dump(HashTable* table);
 void destroy(HashTable* table);
 
 #endif

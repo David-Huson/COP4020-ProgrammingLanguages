@@ -3,15 +3,9 @@
 
 #include "hashTable.h"
 
-HashTable* init() {
-  HashTable* ht = createTable();
-  set(ht, 300, "ID");
-  set(ht, 301, "NUM");
-  set(ht, 400, "BEGIN");
-  set(ht, 401, "END");
-  set(ht, 404, "NOT_FOUND");
+HashTable* ht;
 
-  return ht;
-}
+HashTable* init();
+int lookup(char* key);
 
 #endif
