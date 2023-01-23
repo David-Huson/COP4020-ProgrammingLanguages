@@ -1,6 +1,16 @@
 #include "hashTable.h"
 
+/**
+ * @brief String Rolling hash function.
+ * Sums the values of the string 4 bytes at a time. Every 4th byte is
+ * interpreted as a single long integer.
+ *
+ * @param key the key to hash
+ * @return int the hashed index of the key
+ */
+
 int hash(const char* key) {
+
   int index = 0;
   int c;
   do {
@@ -74,11 +84,7 @@ int get(HashTable* table, const char* key) {
 
   // try to find a valid slot
   Entity* entity = table->entities[slot];
-
-  // no slot means no entry
-  if (entity == NULL) {
-    return -1;
-  }
+  // printf("The entity at slot %d is %d\n", slot, entity->value);
 
   while (entity != NULL) {
     // return value if found
@@ -180,6 +186,7 @@ void destroy(HashTable* table) {
 }
 
 void dump(HashTable* table) {
+  printf("slot[    ] key = value\n");
   for (int i = 0; i < MAX_CAPACITY; ++i) {
     Entity* entity = table->entities[i];
 

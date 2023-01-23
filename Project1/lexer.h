@@ -9,6 +9,7 @@
 #ifndef LEXAN_H
 #define LEXAN_H
 
+#include "baseTypes.h"
 #include "symbolTable.h"
 #include <ctype.h>
 
@@ -18,6 +19,16 @@
  *
  * @return int tokenType
  */
-int lexan(FILE* filename, HashTable* symbolTable, int* lineNum);
+
+int numLexan;
+char idLexan;
+int lineNumber;
+static FILE* file;
+HashTable* symbolTable;
+
+void initLexer(char* fileName);
+int lexan();
+int getType(char* key);
+int getLineNum();
 
 #endif

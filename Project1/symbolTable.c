@@ -1,6 +1,7 @@
 #include "symbolTable.h"
+#include "baseTypes.h"
 
-HashTable* init() {
+HashTable* initSymbolTable() {
   ht = createTable();
   set(ht, ID, 300);
   set(ht, NUM, 301);

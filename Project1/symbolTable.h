@@ -5,7 +5,7 @@
 
 HashTable* ht;
 
-HashTable* init();
+HashTable* initSymbolTable();
 int lookup(char* key);
 
 #endif
