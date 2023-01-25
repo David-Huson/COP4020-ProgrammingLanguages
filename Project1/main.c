@@ -2,8 +2,7 @@
 #include <stdio.h>
 
 int main(int argc, char* argv[]) {
-  printf("starting\n");
-  startParser("test.txt");
+  startParser(argv[1]);
   end();
   return 0;
 }

@@ -14,7 +14,6 @@
 void initLexer(char* fileName) {
   lineNumber = 0;
   symbolTable = initSymbolTable();
-  dump(symbolTable);
   file = fopen(fileName, "r");
 }
 
@@ -44,45 +43,70 @@ int lexan() {
         strncat(numLexan, &ch, numChars + 1);
         ch = fgetc(file);
       }
-      return lookup(NUM);
+      return NUM;
 
     } else if (isalpha(ch)) {
       // printf("ident\n");
-      // // printf("entered id loop\n");
+      // printf("entered id loop\n");
+
       int numChars = 0;
       int capacity = 256;
       char* idLexan = malloc(sizeof(char) * capacity);
-      while (isalpha(ch) && ch != '\n') {
-
+      while ((isalnum(ch) || ch == '_') && ch != '\n') {
         if (numChars == capacity - 1) {
           idLexan = realloc(idLexan, sizeof(char) * capacity);
+        }
+
+        if (ch == '_') {
+          char nextChar = fgetc(file);
+          if (nextChar == '_') {
+            printf("Syntax error on line: %d, Identifiers cannot contain "
+                   "consecutive underscores ('_').\n",
+                   lineNumber);
+            free(idLexan);
+            return DONE;
+          }
+          nextChar = ungetc(nextChar, file);
         }
 
         idLexan[numChars++] = ch;
         ch = fgetc(file);
       }
-      // // printf("ID = %s\n", idLexan);
-      char temp = ch;
+
+      if (idLexan[strlen(idLexan) - 1] == '_') {
+        printf("Syntax error on line: %d, Identifiers cannot "
+               "end with underscores ('_').\n",
+               lineNumber);
+        free(idLexan);
+        return DONE;
+      }
+      // printf("idLexan = %s\n", idLexan);
       ch = ungetc(ch, file);
       int type = lookup(idLexan);
       // printf("type = %d\n", type);
-      if (type == lookup(NOT_FOUND)) {
-        type = lookup(ID);
+      if (type == NOT_FOUND) {
+        if (strcmp(idLexan, "begin") == 0) {
+          type = BEGIN;
+        } else if (strcmp(idLexan, "end") == 0) {
+          type = END;
+        } else {
+          type = ID;
+        }
+
         set(symbolTable, idLexan, type);
+        free(idLexan);
         // printf("type = %d\n", type);
-        return lookup(ID);
+        return type;
       }
       return type;
 
     } else if (ch == EOF) {
-      return lookup(DONE);
+      return DONE;
     } else {
       return ch;
     }
   } while (!feof(file));
-  return lookup(NOT_FOUND);
+  return NOT_FOUND;
 }
-
-int getType(char* key) { return lookup(key); }
 
 int getLineNum() { return lineNumber; }

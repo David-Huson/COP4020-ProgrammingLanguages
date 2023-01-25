@@ -10,7 +10,6 @@
  */
 
 int hash(const char* key) {
-
   int index = 0;
   int c;
   do {
@@ -27,6 +26,7 @@ HashTable* createTable() {
 
   // allocate memory for the entities in the table (the data)
   table->entities = malloc(sizeof(Entity*) * MAX_CAPACITY);
+  table->numEntities = 0;
 
   for (int i = 0; i < MAX_CAPACITY; ++i)
     table->entities[i] = NULL;
@@ -94,7 +94,7 @@ int get(HashTable* table, const char* key) {
 
     entity = entity->next;
   }
-  return -1;
+  return NOT_FOUND;
 }
 
 void del(HashTable* table, const char* key) {
@@ -203,6 +203,33 @@ void dump(HashTable* table) {
       }
 
       entity = entity->next;
+    }
+  }
+}
+
+void dumpType(HashTable* table, int type) {
+  for (int i = 0, j = 0; i < MAX_CAPACITY; ++i) {
+    Entity* entity = table->entities[i];
+
+    if (entity == NULL) {
+      continue;
+    }
+
+    while (1) {
+
+      if (entity->value == type) {
+        j++;
+        printf("Identifier %4d: ", j);
+        printf("%s\n", entity->key);
+        if (entity->next == NULL) {
+          break;
+        }
+        entity = entity->next;
+      }
+
+      if (entity->next == NULL) {
+        break;
+      }
     }
   }
 }

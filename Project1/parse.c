@@ -17,14 +17,19 @@ void startParser(char* fileName) {
   lookahead = 0;
   initLexer(fileName);
   match(lookahead);
-  match(lookup(BEGIN));
+  match(BEGIN);
   assignmentStmt();
 }
 
 void assignmentStmt() {
-  match(getType(ID));
+  match(ID);
   if (lookahead != '=') {
-    printf("error on line: %d in assignStmt()\n", getLineNum());
+    if (lookahead == DONE) {
+      end();
+    } else {
+      printf("error on line: %d in assignStmt()\n", getLineNum());
+      end();
+    }
   } else {
     match(lookahead);
     expression();
@@ -35,7 +40,7 @@ void assignmentStmt() {
 void expression() {
   term();
   while (lookahead == '+' || lookahead == '-') {
-    printf("found an expression\n");
+    // printf("found an expression\n");
     match(lookahead);
     term();
   }
@@ -44,27 +49,24 @@ void expression() {
 void term() {
   factor();
   while (lookahead == '*' || lookahead == '/') {
-    printf("found a term\n");
+    // printf("found a term\n");
     match(lookahead);
     factor();
   }
 }
 
 void factor() {
-  if (lookahead == getType(ID)) {
-    printf("found an ID\n");
-    match(getType(ID));
-  } else if (lookahead == getType(NUM)) {
-    printf("found a NUM\n");
-    match(getType(NUM));
+  if (lookahead == ID) {
+    match(ID);
+  } else if (lookahead == NUM) {
+    match(NUM);
   } else if (lookahead == '(') {
-    printf("open paren\n");
     match('(');
     expression();
-    printf("closed paren\n");
     match(')');
   } else {
     printf("syntax error in factor() at line: %d\n", getLineNum());
+    end();
   }
 }
 
@@ -74,18 +76,15 @@ void match(int type) {
     // printf("matching %d\n", type);
     lookahead = lexan();
     // printf("lookahead now = %d\n", lookahead);
-  } else
-    printf("Syntax error in match() at line: %d\n", getLineNum());
+  } else if (lookahead == DONE) {
+    end();
+  }
 }
 
 void end() {
-  // while (1) {
-  //   Entity* e = get(symbolTable, lookup(ID));
-  //   if (e == NULL)
-  //     break;
 
-  //   printf("Identifier: %s\n", e->value);
-  // }
-  dump(symbolTable);
+  // dump(symbolTable);
+  dumpType(symbolTable, ID);
   destroy(symbolTable);
+  exit(EXIT_FAILURE);
 }

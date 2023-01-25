@@ -1,6 +1,7 @@
 #ifndef HASH_TABLE_H
 #define HASH_TABLE_H
 
+#include "baseTypes.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,6 +16,8 @@ typedef struct Entity {
 
 typedef struct HashTable {
   Entity** entities;
+  int numEntities;
+  int size;
 } HashTable;
 
 int hash(const char* key);
@@ -24,6 +27,7 @@ void set(HashTable* table, const char* key, const int value);
 int get(HashTable* table, const char* key);
 // void del(HashTable* table, const char* key);
 void dump(HashTable* table);
+void dumpType(HashTable* table, int type);
 void destroy(HashTable* table);
 
 #endif
