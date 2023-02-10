@@ -25,7 +25,8 @@ void startParser(char* fileName) {
 void assignmentStmt() {
   match(ID);
   if (lookahead != '=') {
-    printf("Expected an '=' on line %d, col %d\n", getLineNum(), getColNum());
+    printf("Expected an '=' on line %d, col %d\nFailure!\n", getLineNum(),
+           getColNum());
     exit(1);
   } else {
     match(lookahead);
