@@ -1,3 +1,9 @@
+/******************************************************************************
+ * @file baseTypes.h
+ * @author David Huson
+ * @brief The header with some macros for use by the program as token types
+ * @date 2023-01-22
+ ******************************************************************************/
 #ifndef BASE_TYPES_H_
 #define BASE_TYPES_H_
 

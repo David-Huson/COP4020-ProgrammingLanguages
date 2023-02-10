@@ -1,3 +1,9 @@
+/******************************************************************************
+ * @file hashTable.h
+ * @author David Huson
+ * @brief The header with funciton declarations for the hash table.
+ * @date 2023-01-22
+ ******************************************************************************/
 #ifndef HASH_TABLE_H
 #define HASH_TABLE_H
 

@@ -1,13 +1,10 @@
-/**
+/******************************************************************************
  * @file parse.c
- * @author your name (you@domain.com)
- * @brief
- * @version 0.1
+ * @author David Huson
+ * @brief Determines if the token types are in the proper order and places.
  * @date 2023-01-22
  *
- * @copyright Copyright (c) 2023
- *
- */
+ ******************************************************************************/
 
 #include "parse.h"
 #include "baseTypes.h"
@@ -18,18 +15,18 @@ void startParser(char* fileName) {
   initLexer(fileName);
   match(lookahead);
   match(BEGIN);
-  assignmentStmt();
+  do {
+    assignmentStmt();
+  } while (lookahead == ID);
+  match(END);
+  end(0);
 }
 
 void assignmentStmt() {
   match(ID);
   if (lookahead != '=') {
-    if (lookahead == DONE) {
-      end();
-    } else {
-      printf("error on line: %d in assignStmt()\n", getLineNum());
-      end();
-    }
+    printf("Expected an '=' on line %d, col %d\n", getLineNum(), getColNum());
+    exit(1);
   } else {
     match(lookahead);
     expression();
@@ -40,7 +37,6 @@ void assignmentStmt() {
 void expression() {
   term();
   while (lookahead == '+' || lookahead == '-') {
-    // printf("found an expression\n");
     match(lookahead);
     term();
   }
@@ -49,7 +45,6 @@ void expression() {
 void term() {
   factor();
   while (lookahead == '*' || lookahead == '/') {
-    // printf("found a term\n");
     match(lookahead);
     factor();
   }
@@ -64,27 +59,44 @@ void factor() {
     match('(');
     expression();
     match(')');
-  } else {
-    printf("syntax error in factor() at line: %d\n", getLineNum());
-    end();
   }
 }
 
 void match(int type) {
-  // printf("lookahead = %d, match type = %d\n", lookahead, type);
   if (lookahead == type) {
-    // printf("matching %d\n", type);
     lookahead = lexan();
-    // printf("lookahead now = %d\n", lookahead);
-  } else if (lookahead == DONE) {
-    end();
+  } else if (type == ')') {
+    printf("Missing closing parenthesis on line %d, col %d.\n", getLineNum(),
+           getColNum());
+    end(1);
+  } else if (type == ID) {
+    exit(1);
+  } else if (type == BEGIN) {
+    printf("Syntax error on line %d, col %d. All programs must start with "
+           "'begin'\n",
+           getLineNum(), getColNum());
+    end(1);
+  } else if (type == END) {
+    printf("Syntax error on line %d, col %d. All programs must start with "
+           "'end'\n",
+           getLineNum(), getColNum());
+    end(1);
+  } else {
+    printf("Syntax error on line %d, col %d.\n", getLineNum(), getColNum());
+    end(1);
   }
 }
 
-void end() {
+void end(int status) {
 
-  // dump(symbolTable);
+  if (status != 0) {
+    printf("Failure!\n");
+    destroy(symbolTable);
+    exit(EXIT_FAILURE);
+  }
+
+  printf("Success!\n");
   dumpType(symbolTable, ID);
   destroy(symbolTable);
-  exit(EXIT_FAILURE);
+  exit(EXIT_SUCCESS);
 }

@@ -22,7 +22,6 @@
 
 int numLexan;
 char idLexan;
-int lineNumber;
 static FILE* file;
 HashTable* symbolTable;
 
@@ -30,5 +29,6 @@ void initLexer(char* fileName);
 int lexan();
 int getType(char* key);
 int getLineNum();
+int getColNum();
 
 #endif

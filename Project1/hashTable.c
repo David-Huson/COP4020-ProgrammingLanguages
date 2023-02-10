@@ -1,10 +1,17 @@
+/******************************************************************************
+ * @file hashTable.c
+ * @author David Huson
+ * @brief A hashtable using separate chaining. Supports Inserting, searching,
+ * and dumping the contents of either the entire table or all the keys with a
+ * specific value.
+ * @date 2023-01-22
+ ******************************************************************************/
 #include "hashTable.h"
 
 /**
  * @brief String Rolling hash function.
  * Sums the values of the string 4 bytes at a time. Every 4th byte is
  * interpreted as a single long integer.
- *
  * @param key the key to hash
  * @return int the hashed index of the key
  */
@@ -12,10 +19,10 @@
 int hash(const char* key) {
   int index = 0;
   int c;
-  do {
-    c = *key++;
+
+  // some sekC assignment trickery
+  while ((c = *key++))
     index = ((MAX_CAPACITY << 5) + MAX_CAPACITY) + c;
-  } while ((c = *key++));
 
   return index % MAX_CAPACITY;
 }
@@ -34,6 +41,7 @@ HashTable* createTable() {
   return table;
 }
 
+// Creates a single key value pair
 Entity* pair(const char* key, const int value) {
   Entity* entity = malloc(sizeof(Entity) * 1);
   entity->key = malloc(strlen(key) + 1);
@@ -46,6 +54,7 @@ Entity* pair(const char* key, const int value) {
   return entity;
 }
 
+// insert a key and value into the table
 void set(HashTable* table, const char* key, const int value) {
   int slot = hash(key);
 
@@ -79,6 +88,7 @@ void set(HashTable* table, const char* key, const int value) {
   prev->next = pair(key, value);
 }
 
+// search for a specific value by its key
 int get(HashTable* table, const char* key) {
   int slot = hash(key);
 
@@ -97,60 +107,7 @@ int get(HashTable* table, const char* key) {
   return NOT_FOUND;
 }
 
-void del(HashTable* table, const char* key) {
-  int bucket = hash(key);
-
-  // try to find a valid bucket
-  Entity* entity = table->entities[bucket];
-
-  // no bucket means no entry
-  if (entity == NULL) {
-    return;
-  }
-
-  Entity* prev;
-  int index = 0;
-
-  // walk through each entry until either the end is reached or a matching key
-  // is found
-  while (entity != NULL) {
-    // check key
-    if (strcmp(entity->key, key) == 0) {
-      // first item and no next entry
-      if (entity->next == NULL && index == 0) {
-        table->entities[bucket] = NULL;
-      }
-
-      // first item with a next entry
-      if (entity->next != NULL && index == 0) {
-        table->entities[bucket] = entity->next;
-      }
-
-      // last item
-      if (entity->next == NULL && index != 0) {
-        prev->next = NULL;
-      }
-
-      // middle item
-      if (entity->next != NULL && index != 0) {
-        prev->next = entity->next;
-      }
-
-      // free the deleted entry
-      free(entity->key);
-      free(entity);
-
-      return;
-    }
-
-    // walk to next
-    prev = entity;
-    entity = prev->next;
-
-    ++index;
-  }
-}
-
+// destroy the entire hashtable and free all memory allocated
 void destroy(HashTable* table) {
   if (!table)
     return;
@@ -185,6 +142,7 @@ void destroy(HashTable* table) {
   return;
 }
 
+// print all the contents of the hash table
 void dump(HashTable* table) {
   printf("slot[    ] key = value\n");
   for (int i = 0; i < MAX_CAPACITY; ++i) {
@@ -207,8 +165,12 @@ void dump(HashTable* table) {
   }
 }
 
+// print all the keys of a given type
 void dumpType(HashTable* table, int type) {
-  for (int i = 0, j = 0; i < MAX_CAPACITY; ++i) {
+  if (type == ID)
+    printf("Identifiers: [ ");
+
+  for (int i = 0; i < MAX_CAPACITY; ++i) {
     Entity* entity = table->entities[i];
 
     if (entity == NULL) {
@@ -218,9 +180,8 @@ void dumpType(HashTable* table, int type) {
     while (1) {
 
       if (entity->value == type) {
-        j++;
-        printf("Identifier %4d: ", j);
-        printf("%s\n", entity->key);
+        printf("%s, ", entity->key);
+
         if (entity->next == NULL) {
           break;
         }
@@ -232,4 +193,5 @@ void dumpType(HashTable* table, int type) {
       }
     }
   }
+  printf("]\n");
 }
