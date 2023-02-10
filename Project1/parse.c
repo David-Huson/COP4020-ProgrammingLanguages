@@ -81,6 +81,12 @@ void match(int type) {
            "'end'\n",
            getLineNum(), getColNum());
     end(1);
+  } else if (type == ';') {
+    printf("Syntax error on line %d, col %d. Every assignment statement must "
+           "end with a semicolon -> ';'"
+           "'end'\n",
+           getLineNum(), getColNum());
+    end(1);
   } else {
     printf("Syntax error on line %d, col %d.\n", getLineNum(), getColNum());
     end(1);

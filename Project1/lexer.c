@@ -97,7 +97,7 @@ int lexan() {
 
       if (idLexan[strlen(idLexan) - 1] == '_') {
         printf("Syntax error on line %d, col %d. Identifiers cannot end with "
-               "an underscore.\n",
+               "an underscore.\nFailure!\n",
                lineNumber, colNumber);
         free(idLexan);
         return DONE;
