@@ -1,5 +1,6 @@
 begin
-  a = b;
+  int a_, b;
+  a_ = b;
   a = b+2;
 end.
 
