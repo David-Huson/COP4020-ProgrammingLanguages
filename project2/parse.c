@@ -25,8 +25,7 @@ void startParser(char* fileName) {
 void assignmentStmt() {
   match(ID);
   if (lookahead != '=') {
-    printf("Expected an '=' on line %d, col %d\nFailure!\n", getLineNum(),
-           getColNum());
+    error(M_Assignment_Op, getLineNum(), getColNum());
     exit(1);
   } else {
     match(lookahead);
@@ -67,30 +66,49 @@ void match(int type) {
   if (lookahead == type) {
     lookahead = lexan();
   } else if (type == ')') {
-    printf("Missing closing parenthesis on line %d, col %d.\n", getLineNum(),
-           getColNum());
+    error(M_ClosingParen, getLineNum(), getColNum());
     end(1);
   } else if (type == ID) {
     exit(1);
   } else if (type == BEGIN) {
-    printf("Syntax error on line %d, col %d. All programs must start with "
-           "'begin'\n",
-           getLineNum(), getColNum());
+    error(M_Begin, getLineNum(), getColNum());
     end(1);
   } else if (type == END) {
-    printf("Syntax error on line %d, col %d. All programs must start with "
-           "'end'\n",
-           getLineNum(), getColNum());
+    error(M_End, getLineNum(), getColNum());
     end(1);
   } else if (type == ';') {
+    error(M_Semicolon, getLineNum(), getColNum());
+    end(1);
+  } else {
+    error(General_Syntax_Error, getLineNum(), getColNum());
+    end(1);
+  }
+}
+
+void error(ErrorTypes error, int line, int col) {
+  if (error == M_End) {
+    printf("Syntax error on line %d, col %d. All programs must start with "
+           "'end.'\n",
+           line, col);
+  } else if (error == M_ClosingParen) {
+    printf("Missing closing parenthesis on line %d, col %d.\n", line, col);
+  } else if (error == M_Begin) {
+    printf("Syntax error on line %d, col %d. All programs must start with "
+           "'begin'\n",
+           line, col);
+  } else if (error == M_Begin) {
+    printf("Syntax error on line %d, col %d. All programs must start with "
+           "'begin'\n",
+           line, col);
+  } else if (error == M_Semicolon) {
     printf("Syntax error on line %d, col %d. Every assignment statement must "
            "end with a semicolon -> ';'"
            "'end'\n",
-           getLineNum(), getColNum());
-    end(1);
-  } else {
-    printf("Syntax error on line %d, col %d.\n", getLineNum(), getColNum());
-    end(1);
+           line, col);
+  } else if (error == General_Syntax_Error) {
+    printf("Syntax error on line %d, col %d.\n", line, col);
+  } else if (error == M_Assignment_Op) {
+    printf("Expected an '=' on line %d, col %d\nFailure!\n", line, col);
   }
 }
 
