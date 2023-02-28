@@ -11,7 +11,6 @@
 #include "hashTable.h"
 
 HashTable* ht;
-
 HashTable* initSymbolTable();
 int lookup(char* key);
 

@@ -11,22 +11,30 @@
 // declaring these here simulates encapsulation
 int lineNumber;
 int colNumber;
+char* numLexan;
+char* idLexan;
 
 // initialize the lexical analizer's variables, the symbol Table, and open the
 // input file.
-void initLexer(char* fileName) {
+void initLexer(char* fileName, HashTable* table) {
   lineNumber = 1;
   colNumber = 1;
-  symbolTable = initSymbolTable();
+  symbolTable = table;
+  // printf("file open = %d\n", file == NULL);
   file = fopen(fileName, "r");
 }
 
 // read the file character by character and determine the tokens and return
 // their types
 int lexan() {
+  // char ch = fgetc(file);
+  // printf("segfault check\n");
+  // colNumber++;
   char ch = fgetc(file);
   colNumber++;
   do {
+    // printf("segfault check\n");
+
     if (ch == ' ' || ch == '\t') {   // ignore whitespace other than newlines
                                      // (increment column number accordingly)
       ch = fgetc(file);
@@ -44,9 +52,9 @@ int lexan() {
       }
       colNumber = 0;
     } else if (isdigit(ch)) {   // if the character is a digit get the whole
-                                // number and return the correct type
+      // number and return the correct type
       int numChars = 0;
-      char* numLexan = malloc(sizeof(char*));
+      numLexan = malloc(sizeof(char*));
       while (isdigit(ch)) {
         colNumber++;
         numLexan = realloc(numLexan, ++numChars * sizeof(char));
@@ -54,15 +62,14 @@ int lexan() {
         ch = fgetc(file);
       }
 
-      ch = ungetc(ch, file);
+      ungetc(ch, file);
       colNumber--;
       return NUM;
 
     } else if (isalpha(ch)) {   // if the character is an alphabetical character
-
       int numChars = 0;
       int capacity = 256;
-      char* idLexan = malloc(sizeof(char) * capacity);
+      idLexan = malloc(sizeof(char) * capacity);
       while ((isalnum(ch) || ch == '_' || ch == '.') && ch != '\n') {
 
         if (numChars == capacity - 1) {
@@ -76,7 +83,7 @@ int lexan() {
                 "Syntax error on line %d, col %d. Identifiers cannot contain "
                 "consecutive underscores.\n",
                 lineNumber, colNumber);
-            free(idLexan);
+            // free(idLexan);
             return DONE;
           }
           nextChar = ungetc(nextChar, file);
@@ -86,6 +93,7 @@ int lexan() {
         if (ch == '.') {
           char nextChar = fgetc(file);
           if (nextChar != '\n') {
+            free(numLexan);
             free(idLexan);
             return DONE;
           }
@@ -100,22 +108,34 @@ int lexan() {
                "an underscore.\nFailure!\n",
                lineNumber, colNumber);
         free(idLexan);
+        free(numLexan);
+        exit(1);
         return DONE;
       }
-      ch = ungetc(ch, file);
+
+      ungetc(ch, file);
       colNumber--;
+      if (strcmp(idLexan, "int") == 0) {
+        printf("found the int keyword, returning type = %d\n", INT);
+        return INT;
+      }
 
       if (strcmp(idLexan, "begin") == 0) {
-        set(symbolTable, idLexan, BEGIN);
-      } else if (strcmp(idLexan, "end.") == 0) {
-        set(symbolTable, idLexan, END);
+        return BEGIN;
       }
+
+      if (strcmp(idLexan, "end.") == 0) {
+        return END;
+      }
+
       int type = lookup(idLexan);
+
       if (type == NOT_FOUND) {
+
         type = ID;
-        set(symbolTable, idLexan, type);
+        // set(symbolTable, idLexan, type);
       }
-      free(idLexan);
+      // free(idLexan);
       return type;
 
     } else if (ch == EOF) {
@@ -124,8 +144,12 @@ int lexan() {
       return ch;
     }
   } while (!feof(file));
+  free(idLexan);
+  free(numLexan);
   return DONE;
 }
 
 int getLineNum() { return lineNumber; }
 int getColNum() { return colNumber; }
+char* getNumLexeme() { return numLexan; }
+char* getIdLexeme() { return idLexan; }

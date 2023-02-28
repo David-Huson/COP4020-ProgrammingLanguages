@@ -19,16 +19,15 @@
  *
  * @return int tokenType
  */
-
-int numLexan;
-char idLexan;
 static FILE* file;
 HashTable* symbolTable;
 
-void initLexer(char* fileName);
+void initLexer(char* fileName, HashTable* table);
 int lexan();
 int getType(char* key);
 int getLineNum();
 int getColNum();
+char* getIdLexeme();
+char* getNumLexeme();
 
 #endif

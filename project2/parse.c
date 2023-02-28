@@ -12,23 +12,63 @@
 
 void startParser(char* fileName) {
   lookahead = 0;
-  initLexer(fileName);
+  symbolTable = initSymbolTable();
+  initLexer(fileName, symbolTable);
+
   match(lookahead);
   match(BEGIN);
   do {
+    while (lookahead == INT) {
+      printf("lookahead before declaration  = %d\n", lookahead);
+      match(INT);
+      declaration();
+    }
+    printf("calling assignment statement. lookahead = %d\n", lookahead);
     assignmentStmt();
   } while (lookahead == ID);
   match(END);
   end(0);
 }
 
+void declaration() {
+  while (lookahead != ';' && lookahead != INT) {
+    getIdDeclaration();
+    while (lookahead == ',') {
+      match(',');
+      getIdDeclaration();
+    }
+    match(';');
+    if (lookahead != INT) {
+      break;
+    }
+  }
+}
+
+void getIdDeclaration() {
+  // printf("got into get id declaration\n");
+  int type = lookup(getIdLexeme());
+  if (type == NOT_FOUND) {
+    // printf("id = %s\n", getIdLexeme());
+    set(symbolTable, getIdLexeme(), ID);
+  } else {
+    // printf("error\n");
+    // redeclaration
+    error(Redeclaration, getLineNum(), getColNum());
+  }
+  // printf("matching ID for id: %s\n", getIdLexeme());
+  match(ID);
+}
 void assignmentStmt() {
+  printf("lookahead = %d, %s\n", lookahead, getIdLexeme());
+
   match(ID);
   if (lookahead != '=') {
+    // assignment stuff
     error(M_Assignment_Op, getLineNum(), getColNum());
     exit(1);
   } else {
     match(lookahead);
+    printf("lookahead = %d, %s\n", lookahead, getIdLexeme());
     expression();
     match(';');
   }
@@ -37,8 +77,14 @@ void assignmentStmt() {
 void expression() {
   term();
   while (lookahead == '+' || lookahead == '-') {
-    match(lookahead);
-    term();
+    printf("[*****%d, %c*****]\n", lookahead, lookahead);
+    if (lookahead == '+') {
+      printf("[*****%d, %c*****]\n", lookahead, lookahead);
+
+      match(lookahead);
+      term();
+      // printf("[*****%c, %c, %c*****]\n", );
+    }
   }
 }
 
@@ -86,30 +132,31 @@ void match(int type) {
 }
 
 void error(ErrorTypes error, int line, int col) {
+  printf("Error:");
   if (error == M_End) {
-    printf("Syntax error on line %d, col %d. All programs must start with "
+    printf("Syntax error on line %d, col %d. All programs must end with "
            "'end.'\n",
            line, col);
   } else if (error == M_ClosingParen) {
     printf("Missing closing parenthesis on line %d, col %d.\n", line, col);
   } else if (error == M_Begin) {
-    printf("Syntax error on line %d, col %d. All programs must start with "
-           "'begin'\n",
-           line, col);
-  } else if (error == M_Begin) {
-    printf("Syntax error on line %d, col %d. All programs must start with "
+    printf("Syntax error on line %d, col %d. All programs must begin with "
            "'begin'\n",
            line, col);
   } else if (error == M_Semicolon) {
     printf("Syntax error on line %d, col %d. Every assignment statement must "
-           "end with a semicolon -> ';'"
-           "'end'\n",
+           "end with a semicolon -> ';'",
            line, col);
   } else if (error == General_Syntax_Error) {
     printf("Syntax error on line %d, col %d.\n", line, col);
   } else if (error == M_Assignment_Op) {
     printf("Expected an '=' on line %d, col %d\nFailure!\n", line, col);
+  } else if (error == Redeclaration) {
+    printf("Cannot define id: %s on line %d col %d because it has already been "
+           "defined elsewhere (redefinition error)\n",
+           getIdLexeme(), line, col);
   }
+  exit(1);
 }
 
 void end(int status) {

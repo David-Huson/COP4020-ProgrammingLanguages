@@ -167,6 +167,7 @@ void dump(HashTable* table) {
 
 // print all the keys of a given type
 void dumpType(HashTable* table, int type) {
+  printf("printing all identifiers...\n");
   if (type == ID)
     printf("Identifiers: [ ");
 
@@ -178,7 +179,6 @@ void dumpType(HashTable* table, int type) {
     }
 
     while (1) {
-
       if (entity->value == type) {
         printf("%s, ", entity->key);
 
@@ -187,7 +187,6 @@ void dumpType(HashTable* table, int type) {
         }
         entity = entity->next;
       }
-
       if (entity->next == NULL) {
         break;
       }
