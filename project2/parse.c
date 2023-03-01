@@ -10,8 +10,17 @@
 #include "baseTypes.h"
 #include "lexer.h"
 
+int numChars = 0;
+int capacity = 256;
+char* postFix;
+int currentRegister = 0;
+char* lhsID;
+int numExpressions;
+
 void startParser(char* fileName) {
   lookahead = 0;
+
+  lhsID = malloc(sizeof(char*) * capacity);
   symbolTable = initSymbolTable();
   initLexer(fileName, symbolTable);
 
@@ -19,13 +28,12 @@ void startParser(char* fileName) {
   match(BEGIN);
   do {
     while (lookahead == INT) {
-      printf("lookahead before declaration  = %d\n", lookahead);
       match(INT);
       declaration();
     }
-    printf("calling assignment statement. lookahead = %d\n", lookahead);
     assignmentStmt();
   } while (lookahead == ID);
+
   match(END);
   end(0);
 }
@@ -45,21 +53,22 @@ void declaration() {
 }
 
 void getIdDeclaration() {
-  // printf("got into get id declaration\n");
   int type = lookup(getIdLexeme());
   if (type == NOT_FOUND) {
-    // printf("id = %s\n", getIdLexeme());
     set(symbolTable, getIdLexeme(), ID);
   } else {
-    // printf("error\n");
     // redeclaration
     error(Redeclaration, getLineNum(), getColNum());
   }
-  // printf("matching ID for id: %s\n", getIdLexeme());
   match(ID);
 }
 void assignmentStmt() {
-  printf("lookahead = %d, %s\n", lookahead, getIdLexeme());
+  postFix = malloc(sizeof(char) * capacity);
+  numChars = 0;
+  numExpressions = 0;
+  currentRegister = 0;
+  // registers[currentRegister] = *getIdLexeme();
+  lhsID = getIdLexeme();
 
   match(ID);
   if (lookahead != '=') {
@@ -68,42 +77,73 @@ void assignmentStmt() {
     exit(1);
   } else {
     match(lookahead);
-    printf("lookahead = %d, %s\n", lookahead, getIdLexeme());
+    numExpressions++;
     expression();
+    // printf("R%d = %s\n", currentRegister++, getIdLexeme());
+
+    // if (currentRegister >= 0)
+    // printf("R%d = R%d\n", currentRegister, currentRegister);
+    //   // currentRegister++;
+    // }
     match(';');
   }
+  printf("%s = R%d\n", lhsID, currentRegister -= numExpressions);
+  if (numChars > 1)
+    printf("*****[%s]*****\n", postFix);
 }
 
 void expression() {
   term();
   while (lookahead == '+' || lookahead == '-') {
-    printf("[*****%d, %c*****]\n", lookahead, lookahead);
-    if (lookahead == '+') {
-      printf("[*****%d, %c*****]\n", lookahead, lookahead);
-
-      match(lookahead);
-      term();
-      // printf("[*****%c, %c, %c*****]\n", );
-    }
+    int opCode = lookahead;
+    match(lookahead);
+    term();
+    currentRegister -= 2;
+    printf("R%d = R%d %c R%d\n", currentRegister, currentRegister, opCode,
+           ++currentRegister);
+    // printf("%c,", opCode);
+    char charOpCode = opCode + '\0';
+    strncat(postFix, &charOpCode, 1);
+    numChars++;
   }
 }
 
 void term() {
   factor();
   while (lookahead == '*' || lookahead == '/') {
+    int opCode = lookahead;
     match(lookahead);
     factor();
+    // printf("%c,", opCode);
+    printf("R%d = R%d %c R%d\n", currentRegister, currentRegister, opCode,
+           ++currentRegister);
+    char charOpCode = opCode + '\0';
+    strncat(postFix, &charOpCode, 1);
+    numChars++;
   }
 }
 
 void factor() {
   if (lookahead == ID) {
+    printf("R%d = %s\n", currentRegister++, getIdLexeme());
+    // printf("%s", getIdLexeme());    //prints the lexeme for postfix
+    strcat(postFix, getIdLexeme());
+    numChars++;
     match(ID);
+    // currentRegister--;
   } else if (lookahead == NUM) {
+    printf("R%d = %s\n", currentRegister++, getNumLexeme());
+    strcat(postFix, getNumLexeme());
+    numChars++;
+    // printf("%s", getNumLexeme());
     match(NUM);
   } else if (lookahead == '(') {
     match('(');
+    numExpressions++;
     expression();
+    currentRegister--;
+    numExpressions--;
+    // printf("R%d = %s\n", currentRegister++, getIdLexeme());
     match(')');
   }
 }

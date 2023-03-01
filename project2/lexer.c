@@ -14,7 +14,7 @@ int colNumber;
 char* numLexan;
 char* idLexan;
 
-// initialize the lexical analizer's variables, the symbol Table, and open the
+// initialize the lexical analyzer's variables, the symbol Table, and open the
 // input file.
 void initLexer(char* fileName, HashTable* table) {
   lineNumber = 1;
@@ -116,7 +116,6 @@ int lexan() {
       ungetc(ch, file);
       colNumber--;
       if (strcmp(idLexan, "int") == 0) {
-        printf("found the int keyword, returning type = %d\n", INT);
         return INT;
       }
 
