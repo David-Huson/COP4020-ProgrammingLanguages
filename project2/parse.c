@@ -98,9 +98,9 @@ void expression() {
     int opCode = lookahead;
     match(lookahead);
     term();
-    currentRegister -= 2;
-    printf("R%d = R%d %c R%d\n", currentRegister, currentRegister, opCode,
-           ++currentRegister);
+    // currentRegister -= 2;
+    printf("R%d = R%d %c R%d\n", currentRegister - 2, currentRegister - 2,
+           opCode, --currentRegister);
     // printf("%c,", opCode);
     char charOpCode = opCode + '\0';
     strncat(postFix, &charOpCode, 1);
@@ -115,8 +115,8 @@ void term() {
     match(lookahead);
     factor();
     // printf("%c,", opCode);
-    printf("R%d = R%d %c R%d\n", currentRegister, currentRegister, opCode,
-           ++currentRegister);
+    printf("R%d = R%d %c R%d\n", currentRegister - 2, currentRegister - 2,
+           opCode, --currentRegister);
     char charOpCode = opCode + '\0';
     strncat(postFix, &charOpCode, 1);
     numChars++;
@@ -139,10 +139,10 @@ void factor() {
     match(NUM);
   } else if (lookahead == '(') {
     match('(');
-    numExpressions++;
+    // numExpressions++;
     expression();
-    currentRegister--;
-    numExpressions--;
+    // currentRegister--;
+    // numExpressions--;
     // printf("R%d = %s\n", currentRegister++, getIdLexeme());
     match(')');
   }
