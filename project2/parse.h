@@ -26,4 +26,7 @@ void match(int type);
 void end();
 void error(ErrorTypes error, int line, int col);
 void getIdDeclaration();
+void readlogs();
+void write(char* string);
+void readLogs();
 #endif

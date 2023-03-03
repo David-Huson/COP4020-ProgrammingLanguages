@@ -35,3 +35,4 @@ echo "==========================================================================
 
 echo "cleaning up object files"
 make clean
+rm logs.txt

@@ -16,9 +16,13 @@ char* postFix;
 int currentRegister = 0;
 char* lhsID;
 int numExpressions;
+FILE* logs;
+char* logFile = "logs.txt";
 
 void startParser(char* fileName) {
   lookahead = 0;
+  logs = fopen(logFile, "w");
+  fclose(logs);
 
   lhsID = malloc(sizeof(char*) * capacity);
   symbolTable = initSymbolTable();
@@ -63,11 +67,11 @@ void getIdDeclaration() {
   match(ID);
 }
 void assignmentStmt() {
+  // logs = fopen(logFile, "a");
   postFix = malloc(sizeof(char) * capacity);
   numChars = 0;
   numExpressions = 0;
   currentRegister = 0;
-  // registers[currentRegister] = *getIdLexeme();
   lhsID = getIdLexeme();
 
   match(ID);
@@ -79,17 +83,16 @@ void assignmentStmt() {
     match(lookahead);
     numExpressions++;
     expression();
-    // printf("R%d = %s\n", currentRegister++, getIdLexeme());
-
-    // if (currentRegister >= 0)
-    // printf("R%d = R%d\n", currentRegister, currentRegister);
-    //   // currentRegister++;
-    // }
     match(';');
   }
-  printf("%s = R%d\n", lhsID, currentRegister -= numExpressions);
-  if (numChars > 1)
-    printf("*****[%s]*****\n", postFix);
+  char string[256];
+  sprintf(string, "%s = R%d\n", lhsID, currentRegister -= numExpressions);
+  write(string);
+  if (numChars > 1) {
+    char string[256];
+    sprintf(string, "*****[%s]*****\n", postFix);
+    write(string);
+  }
 }
 
 void expression() {
@@ -98,10 +101,12 @@ void expression() {
     int opCode = lookahead;
     match(lookahead);
     term();
-    // currentRegister -= 2;
-    printf("R%d = R%d %c R%d\n", currentRegister - 2, currentRegister - 2,
-           opCode, --currentRegister);
-    // printf("%c,", opCode);
+    char string[256];
+    sprintf(string, "R%d = R%d %c R%d\n", currentRegister - 2,
+            currentRegister - 2, opCode, currentRegister - 1);
+
+    --currentRegister;
+    write(string);
     char charOpCode = opCode + '\0';
     strncat(postFix, &charOpCode, 1);
     numChars++;
@@ -109,14 +114,17 @@ void expression() {
 }
 
 void term() {
+
   factor();
   while (lookahead == '*' || lookahead == '/') {
     int opCode = lookahead;
     match(lookahead);
     factor();
-    // printf("%c,", opCode);
-    printf("R%d = R%d %c R%d\n", currentRegister - 2, currentRegister - 2,
-           opCode, --currentRegister);
+    char string[256];
+    sprintf(string, "R%d = R%d %c R%d\n", currentRegister - 2,
+            currentRegister - 2, opCode, currentRegister - 1);
+    --currentRegister;
+    write(string);
     char charOpCode = opCode + '\0';
     strncat(postFix, &charOpCode, 1);
     numChars++;
@@ -125,25 +133,27 @@ void term() {
 
 void factor() {
   if (lookahead == ID) {
-    printf("R%d = %s\n", currentRegister++, getIdLexeme());
-    // printf("%s", getIdLexeme());    //prints the lexeme for postfix
+    if (lookup(getIdLexeme()) == NOT_FOUND) {
+      printf("error, cannot assign to an undeclared id\n");
+      end(1);
+    }
+    char string[256];
+    sprintf(string, "R%d = %s\n", currentRegister++, getIdLexeme());
+    write(string);
     strcat(postFix, getIdLexeme());
     numChars++;
     match(ID);
-    // currentRegister--;
   } else if (lookahead == NUM) {
-    printf("R%d = %s\n", currentRegister++, getNumLexeme());
-    strcat(postFix, getNumLexeme());
+    char string[256];
+    sprintf(string, "R%d = %d\n", currentRegister++, atoi(getNumLexeme()));
+    write(string);
+
+    sprintf(postFix, "%s%d", postFix, atoi(getNumLexeme()));
     numChars++;
-    // printf("%s", getNumLexeme());
     match(NUM);
   } else if (lookahead == '(') {
     match('(');
-    // numExpressions++;
     expression();
-    // currentRegister--;
-    // numExpressions--;
-    // printf("R%d = %s\n", currentRegister++, getIdLexeme());
     match(')');
   }
 }
@@ -208,7 +218,38 @@ void end(int status) {
   }
 
   printf("Success!\n");
+  readLogs();
+  // printf("a\n");
   dumpType(symbolTable, ID);
   destroy(symbolTable);
   exit(EXIT_SUCCESS);
+}
+
+void write(char* string) {
+  logs = fopen(logFile, "a");
+  fputs(string, logs);
+  fclose(logs);
+}
+
+void readLogs() {
+  char ch;
+  // Opening file in reading mode
+  logs = fopen(logFile, "r");
+
+  if (NULL == logs) {
+    printf("file can't be opened \n");
+  }
+
+  // printf("content of this file are \n");
+
+  // Printing what is written in file
+  // character by character using loop.
+  // ch = fgetc(logs);
+  do {
+    ch = fgetc(logs);
+    if (ch != EOF)
+      printf("%c", ch);
+  } while (!feof(logs));
+  // Closing the file
+  fclose(logs);
 }
