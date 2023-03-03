@@ -85,13 +85,12 @@ void assignmentStmt() {
     expression();
     match(';');
   }
-  char string[256];
-  sprintf(string, "%s = R%d\n", lhsID, currentRegister -= numExpressions);
-  write(string);
+
+  printf("%s = R%d\n", lhsID, currentRegister -= numExpressions);
+
   if (numChars > 1) {
-    char string[256];
-    sprintf(string, "*****[%s]*****\n", postFix);
-    write(string);
+
+    printf("*****[%s]*****\n", postFix);
   }
 }
 
@@ -101,12 +100,12 @@ void expression() {
     int opCode = lookahead;
     match(lookahead);
     term();
-    char string[256];
-    sprintf(string, "R%d = R%d %c R%d\n", currentRegister - 2,
-            currentRegister - 2, opCode, currentRegister - 1);
+
+    printf("R%d = R%d %c R%d\n", currentRegister - 2, currentRegister - 2,
+           opCode, currentRegister - 1);
 
     --currentRegister;
-    write(string);
+
     char charOpCode = opCode + '\0';
     strncat(postFix, &charOpCode, 1);
     numChars++;
@@ -120,11 +119,11 @@ void term() {
     int opCode = lookahead;
     match(lookahead);
     factor();
-    char string[256];
-    sprintf(string, "R%d = R%d %c R%d\n", currentRegister - 2,
-            currentRegister - 2, opCode, currentRegister - 1);
+
+    printf("R%d = R%d %c R%d\n", currentRegister - 2, currentRegister - 2,
+           opCode, currentRegister - 1);
     --currentRegister;
-    write(string);
+
     char charOpCode = opCode + '\0';
     strncat(postFix, &charOpCode, 1);
     numChars++;
@@ -137,16 +136,15 @@ void factor() {
       printf("error, cannot assign to an undeclared id\n");
       end(1);
     }
-    char string[256];
-    sprintf(string, "R%d = %s\n", currentRegister++, getIdLexeme());
-    write(string);
+
+    printf("R%d = %s\n", currentRegister++, getIdLexeme());
+
     strcat(postFix, getIdLexeme());
     numChars++;
     match(ID);
   } else if (lookahead == NUM) {
-    char string[256];
-    sprintf(string, "R%d = %d\n", currentRegister++, atoi(getNumLexeme()));
-    write(string);
+
+    printf("R%d = %d\n", currentRegister++, atoi(getNumLexeme()));
 
     sprintf(postFix, "%s%d", postFix, atoi(getNumLexeme()));
     numChars++;
@@ -218,38 +216,9 @@ void end(int status) {
   }
 
   printf("Success!\n");
-  readLogs();
+  // readLogs();
   // printf("a\n");
   dumpType(symbolTable, ID);
   destroy(symbolTable);
   exit(EXIT_SUCCESS);
-}
-
-void write(char* string) {
-  logs = fopen(logFile, "a");
-  fputs(string, logs);
-  fclose(logs);
-}
-
-void readLogs() {
-  char ch;
-  // Opening file in reading mode
-  logs = fopen(logFile, "r");
-
-  if (NULL == logs) {
-    printf("file can't be opened \n");
-  }
-
-  // printf("content of this file are \n");
-
-  // Printing what is written in file
-  // character by character using loop.
-  // ch = fgetc(logs);
-  do {
-    ch = fgetc(logs);
-    if (ch != EOF)
-      printf("%c", ch);
-  } while (!feof(logs));
-  // Closing the file
-  fclose(logs);
 }
