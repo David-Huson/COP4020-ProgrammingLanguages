@@ -83,8 +83,7 @@ int lexan() {
                 "Syntax error on line %d, col %d. Identifiers cannot contain "
                 "consecutive underscores.\n",
                 lineNumber, colNumber);
-            // free(idLexan);
-            return DONE;
+            exit(1);
           }
           nextChar = ungetc(nextChar, file);
           colNumber--;
