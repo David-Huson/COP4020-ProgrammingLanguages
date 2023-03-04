@@ -161,8 +161,9 @@ void factor() {
 
     char string[256];
     memset(string, '\0', 256);
-    sprintf(postFix, "%s%d", postFix, atoi(getNumLexeme()));
+    sprintf(string, "R%d = %d\n", currentRegister++, atoi(getNumLexeme()));
     fputs(string, logs);
+    sprintf(postFix, "%s%d\0", postFix, atoi(getNumLexeme()));
     numChars++;
     match(NUM);
   } else if (lookahead == '(') {
