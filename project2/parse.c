@@ -17,13 +17,13 @@ int currentRegister = 0;
 char* lhsID;
 int numExpressions;
 FILE* logs;
-char* logFile = "logs.txt";
+char* logFile = "./logs.txt";
 
 void startParser(char* fileName) {
   lookahead = 0;
   logs = fopen(logFile, "w");
   fclose(logs);
-
+  logs = fopen(logFile, "a");
   lhsID = malloc(sizeof(char*) * capacity);
   symbolTable = initSymbolTable();
   initLexer(fileName, symbolTable);
@@ -86,12 +86,18 @@ void assignmentStmt() {
     match(';');
   }
   char string[256];
+  memset(string, '\0', 256);
   sprintf(string, "%s = R%d\n", lhsID, currentRegister -= numExpressions);
-  write(string);
+  // char string[256];
+  fputs(string, logs);
+  // fclose(logs);
   if (numChars > 1) {
+
     char string[256];
+    memset(string, '\0', 256);
     sprintf(string, "*****[%s]*****\n", postFix);
-    write(string);
+    fputs(string, logs);
+    // fclose(logs);
   }
 }
 
@@ -102,11 +108,13 @@ void expression() {
     match(lookahead);
     term();
     char string[256];
+    memset(string, '\0', 256);
     sprintf(string, "R%d = R%d %c R%d\n", currentRegister - 2,
             currentRegister - 2, opCode, currentRegister - 1);
+    fputs(string, logs);
 
     --currentRegister;
-    write(string);
+
     char charOpCode = opCode + '\0';
     strncat(postFix, &charOpCode, 1);
     numChars++;
@@ -120,11 +128,14 @@ void term() {
     int opCode = lookahead;
     match(lookahead);
     factor();
+
     char string[256];
+    memset(string, '\0', 256);
     sprintf(string, "R%d = R%d %c R%d\n", currentRegister - 2,
             currentRegister - 2, opCode, currentRegister - 1);
+    fputs(string, logs);
     --currentRegister;
-    write(string);
+
     char charOpCode = opCode + '\0';
     strncat(postFix, &charOpCode, 1);
     numChars++;
@@ -138,17 +149,20 @@ void factor() {
       end(1);
     }
     char string[256];
+    memset(string, '\0', 256);
     sprintf(string, "R%d = %s\n", currentRegister++, getIdLexeme());
-    write(string);
+    fputs(string, logs);
+
     strcat(postFix, getIdLexeme());
     numChars++;
     match(ID);
   } else if (lookahead == NUM) {
-    char string[256];
-    sprintf(string, "R%d = %d\n", currentRegister++, atoi(getNumLexeme()));
-    write(string);
+    // printf("R%d = %d\n", currentRegister++, atoi(getNumLexeme()));
 
+    char string[256];
+    memset(string, '\0', 256);
     sprintf(postFix, "%s%d", postFix, atoi(getNumLexeme()));
+    fputs(string, logs);
     numChars++;
     match(NUM);
   } else if (lookahead == '(') {
@@ -218,38 +232,25 @@ void end(int status) {
   }
 
   printf("Success!\n");
-  readLogs();
+  fclose(logs);
+  logs = fopen(logFile, "rb");
+  char ch;
+
+  do {
+    ch = fgetc(logs);
+    if (ch == EOF)
+      break;
+
+    if (ch != '\n' && (ch < 32 || ch > 122)) {
+      continue;
+    }
+
+    printf("%c", ch);
+  } while (!feof(logs));
+  fclose(logs);
+  // readLogs();
   // printf("a\n");
   dumpType(symbolTable, ID);
   destroy(symbolTable);
   exit(EXIT_SUCCESS);
-}
-
-void write(char* string) {
-  logs = fopen(logFile, "a");
-  fputs(string, logs);
-  fclose(logs);
-}
-
-void readLogs() {
-  char ch;
-  // Opening file in reading mode
-  logs = fopen(logFile, "r");
-
-  if (NULL == logs) {
-    printf("file can't be opened \n");
-  }
-
-  // printf("content of this file are \n");
-
-  // Printing what is written in file
-  // character by character using loop.
-  // ch = fgetc(logs);
-  do {
-    ch = fgetc(logs);
-    if (ch != EOF)
-      printf("%c", ch);
-  } while (!feof(logs));
-  // Closing the file
-  fclose(logs);
 }
