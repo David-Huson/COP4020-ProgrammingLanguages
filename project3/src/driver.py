@@ -1,17 +1,21 @@
-def getFsaData(filename):
-  with open(filename) as fsaFile:
-    data = fsaFile.read()
-  print(data)
-  splitData = data.split(";")
-  numStates = splitData[0]
-  print(numStates)
-  alphabet = splitData[1].strip()
-  print(alphabet)
-  transitionSet = splitData[2].split(",")
-  print(transitionSet)
-  startState = splitData[3]
-  print(startState)
-  acceptingStateSet = splitData[4]
-  print( acceptingStateSet)
-			
-getFsaData("./fsa.txt")
+###############################################################################
+# David Huson                                                                 #
+# Project 3                                                                   #
+# driver.py                                                                   #
+# 3/20/23                                                                     #
+#                                                                             #
+# The entry point for the program. Gets the fsa definition string from the    #
+# file specified in the first command line argument after the program name    #
+# tests the string given in the text file passed in the second command line   #
+# argument, and calls the drawGraph function to create the gui representation #
+###############################################################################
+from fsa import Automaton
+from utilities import *
+import sys
+
+if __name__ == "__main__":
+  fsaDescriptionFile = sys.argv[1]
+  numStates, alphabet, startState, transitions, acceptingStates = tokenize(fsaDescriptionFile)
+  fa = Automaton( int(numStates), alphabet, transitions, startState, acceptingStates)
+  fa.testSentence(getSentenceFromFile(sys.argv[2]))
+  fa.drawGraph()
