@@ -28,7 +28,7 @@ class Node(Circle):
   def setAsInitialState(self) -> None:
     self.acceptingState = True
     
-  def pos(self) -> list[int, int]:
+  def pos(self) -> list:
     return self.x, self.y
   
   def getLabel(self) -> str:

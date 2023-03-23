@@ -15,7 +15,7 @@ from node import *
 
 
 class Automaton:
-    def __init__(self, numStates: int, alphabet: list[str], transitions: list, initialState: int, acceptingStates: list[int]):
+    def __init__(self, numStates: int, alphabet: list, transitions: list, initialState: int, acceptingStates: list):
         self.alphabet = alphabet
         self.initialState = initialState
         self.acceptingStates = acceptingStates

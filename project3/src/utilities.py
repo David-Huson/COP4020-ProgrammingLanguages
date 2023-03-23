@@ -8,9 +8,9 @@
 ###############################################################################
 
 from re import sub
-
-def tokenize(filename):
-  with open(filename) as fsaFile:
+import sys
+def tokenize():
+  with open(sys.argv[1]) as fsaFile:
     rawData = fsaFile.read()
 
   fsaData = rawData.split(";")
@@ -27,7 +27,7 @@ def tokenize(filename):
     acceptingStateSet[i] = int(state)
   return (numStates, alphabet, startState, transitionSet, acceptingStateSet)
 
-def getSentenceFromFile(filename) -> str:
-  with open(filename) as file:
+def getSentenceFromFile() -> str:
+  with open(sys.argv[2])as file:
     sentence = file.read()
   return sentence.strip()

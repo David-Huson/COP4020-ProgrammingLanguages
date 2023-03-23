@@ -19,7 +19,7 @@ from arrow import Arrow
 
 class Graph:
 
-    def __init__(self, numNodes, nodes: list[Node], adjacencyList: list[list[int]], transitionLabels: list[str]):
+    def __init__(self, numNodes, nodes: list, adjacencyList: list, transitionLabels: list):
         self.root = tk.Tk()
         self.canvas = tk.Canvas(self.root, width=(
             150*numNodes) / 2, height=150 * numNodes, borderwidth=0, highlightthickness=0, bg="white")
