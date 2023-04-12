@@ -11,11 +11,9 @@
 ###############################################################################
 from fsa import Automaton
 from utilities import *
-import sys
 
 if __name__ == "__main__":
-  fsaDescriptionFile = sys.argv[1]
-  numStates, alphabet, startState, transitions, acceptingStates = tokenize(fsaDescriptionFile)
+  numStates, alphabet, startState, transitions, acceptingStates = tokenize()
   fa = Automaton( int(numStates), alphabet, transitions, startState, acceptingStates)
-  fa.testSentence(getSentenceFromFile(sys.argv[2]))
+  fa.testSentence(getSentenceFromFile())
   fa.drawGraph()
