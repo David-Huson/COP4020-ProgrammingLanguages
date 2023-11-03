@@ -14,7 +14,7 @@
 - Finally, your program must include a capability to provide comments. Comments will be on a single line and they will start with a tilda:
 
 >[!Note]
->In [part 2](https://github.com/David-Huson/COP4020-ProgrammingLanguages/edit/main/project2) of thie project, we will build an Intermediate representation for this grammar
+>In [part 2](https://github.com/David-Huson/COP4020-ProgrammingLanguages/tree/main/project2) of thie project, we will build an Intermediate representation for this grammar
 
 `~ this is a comment`
 
