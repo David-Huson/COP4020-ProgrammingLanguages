@@ -13,6 +13,9 @@
     - A statement may appear on multiple lines (with no continuation character).
 - Finally, your program must include a capability to provide comments. Comments will be on a single line and they will start with a tilda:
 
+>[!Note]
+>In [part 2](https://github.com/David-Huson/COP4020-ProgrammingLanguages/edit/main/Project1) of thie project, we will build an Intermediate representation for this grammar
+
 `~ this is a comment`
 
 You will parse the statements, keeping track of where you are in the string, and report whether or not the input program is legal. Your program will report either
